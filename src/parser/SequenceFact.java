@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class SequenceFact extends ATokVisitorFact {
 
-
+ 
 	/**
 	 * Factory for the first grammar non-terminals.
 	 */
