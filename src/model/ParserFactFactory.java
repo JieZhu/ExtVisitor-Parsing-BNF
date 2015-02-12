@@ -146,7 +146,7 @@ public class ParserFactFactory {
 		ProxyFact tFact_Proxy = new ProxyFact();
 
 		ITokVisitorFact sFact = new CombinationFact("S", tkzr, dFact_Proxy,
-				new SequenceFact("s1", tkzr, linefeedSymFact, sFact_Proxy));
+				new SequenceFact("S1", tkzr, linefeedSymFact, sFact_Proxy));
 		sFact_Proxy.setFact(sFact);
 
 		ITokVisitorFact dFact = new MultiSequenceFact("D", tkzr, idFact,

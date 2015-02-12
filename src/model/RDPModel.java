@@ -238,34 +238,35 @@ public class RDPModel {
 
 		System.out.println("RDPModel.checkBNF(): "+resultStr);
 
+		return resultStr;
 		// COMMENT OUT THE REST OF THIS METHOD WHEN TESTING FindNonTerminalsAlgo
-		try {
-
-			//ITokenizer tkzr2 = tokenizer2symbols.get(tokenizerClass).apply(new FileReader(filename));
-			ITokenizer tkzr2 = LexerFactory.fromKeywords(keywordSet.toArray(new String[keywordSet.size()])).makeLexer(new FileReader(filename));
-			Token token = tkzr2.getNextToken();
-			while(token != Token.EOF) {  // print out all the tokens in the tokenizer 
-				System.out.println("token = "+token+" "+token.getName());
-				token= tkzr2.getNextToken();
-			}
-			//tkzr2 = tokenizer2symbols.get(tokenizerClass).apply(new FileReader(filename));   // reset the tokenizer
-			tkzr2 = LexerFactory.fromKeywords(keywordSet.toArray(new String[keywordSet.size()])).makeLexer(new FileReader(filename));
-
-			System.out.println("RDPModel.checkBNF(): Starting MakeParserFactAlgo...");
-			ITokVisitorFact parserFact = parseResult.execute(new parser.visitor.bnf.MakeParserFactAlgo(tkzr2, nonTerminalsMap));
-			resultStr += "parserFact = \n"+parserFact+"\n";
-			ITokVisitor<IGrammarSymbol, Object> parser = parserFact.makeVisitor();
-			IGrammarSymbol parseResult2 = tkzr2.getNextToken().execute(parser);
-			System.err.println("Result = \n" + parseResult2);
-
-			resultStr += parseResult2.toString()+"\n";
-			return resultStr;
-		}
-		catch(Exception expt) {
-			System.err.println("checkBNF():  Exception = "+expt);
-			expt.printStackTrace();
-			return "checkBNF():  Exception = "+expt;
-		}
+//		try {
+//
+//			//ITokenizer tkzr2 = tokenizer2symbols.get(tokenizerClass).apply(new FileReader(filename));
+//			ITokenizer tkzr2 = LexerFactory.fromKeywords(keywordSet.toArray(new String[keywordSet.size()])).makeLexer(new FileReader(filename));
+//			Token token = tkzr2.getNextToken();
+//			while(token != Token.EOF) {  // print out all the tokens in the tokenizer 
+//				System.out.println("token = "+token+" "+token.getName());
+//				token= tkzr2.getNextToken();
+//			}
+//			//tkzr2 = tokenizer2symbols.get(tokenizerClass).apply(new FileReader(filename));   // reset the tokenizer
+//			tkzr2 = LexerFactory.fromKeywords(keywordSet.toArray(new String[keywordSet.size()])).makeLexer(new FileReader(filename));
+//
+//			System.out.println("RDPModel.checkBNF(): Starting MakeParserFactAlgo...");
+//			ITokVisitorFact parserFact = parseResult.execute(new parser.visitor.bnf.MakeParserFactAlgo(tkzr2, nonTerminalsMap));
+//			resultStr += "parserFact = \n"+parserFact+"\n";
+//			ITokVisitor<IGrammarSymbol, Object> parser = parserFact.makeVisitor();
+//			IGrammarSymbol parseResult2 = tkzr2.getNextToken().execute(parser);
+//			System.err.println("Result = \n" + parseResult2);
+//
+//			resultStr += parseResult2.toString()+"\n";
+//			return resultStr;
+//		}
+//		catch(Exception expt) {
+//			System.err.println("checkBNF():  Exception = "+expt);
+//			expt.printStackTrace();
+//			return "checkBNF():  Exception = "+expt;
+//		}
 		// COMMENT OUT TO HERE
 	}
 }
