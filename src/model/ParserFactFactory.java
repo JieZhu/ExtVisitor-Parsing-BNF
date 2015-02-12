@@ -3,9 +3,7 @@ package model;
 import java.io.FileNotFoundException;
 import java.util.Set;
 
-import extvisitor.IExtVisitorCmd;
 import parser.*;
-import token.Token;
 import token.tokenizer.*;
 
 /**
@@ -134,7 +132,7 @@ public class ParserFactFactory {
 		// };
 
 		// STUDENT TO COMPLETE
-		ITokVisitorFact linefeedSymFact = new TerminalSymbolFact("lf", tkzr);
+		ITokVisitorFact linefeedSymFact = new TerminalSymbolFact("\n", tkzr);
 		ITokVisitorFact assignmentSymFact = new TerminalSymbolFact("::=", tkzr);
 		ITokVisitorFact orSymFact = new TerminalSymbolFact("|", tkzr);
 		ITokVisitorFact idFact = new TerminalSymbolFact("Id", tkzr);
@@ -149,30 +147,29 @@ public class ParserFactFactory {
 
 		ITokVisitorFact sFact = new CombinationFact("S", tkzr, dFact_Proxy,
 				new SequenceFact("s1", tkzr, linefeedSymFact, sFact_Proxy));
+		sFact_Proxy.setFact(sFact);
 
 		ITokVisitorFact dFact = new MultiSequenceFact("D", tkzr, idFact,
 				assignmentSymFact, eFact_Proxy, lFact_Proxy);
+		dFact_Proxy.setFact(dFact);
 
 		ITokVisitorFact lFact = new CombinationFact("L", tkzr,
 				new SequenceFact("L2", tkzr, linefeedSymFact,
 						new CombinationFact("L3", tkzr, lFact_Proxy,
 								dFact_Proxy)), new MTSymbolFact(tkzr));
+		lFact_Proxy.setFact(lFact);
 
 		ITokVisitorFact eFact = new SequenceFact("E", tkzr, tFact_Proxy,
 				new CombinationFact("E1", tkzr, new SequenceFact("E1a", tkzr,
 						orSymFact, eFact_Proxy), new MTSymbolFact(tkzr)));
+		eFact_Proxy.setFact(eFact);
 
 		ITokVisitorFact tFact = new SequenceFact("T", tkzr,
 				new CombinationFact("T1", tkzr, idFact, quotedStringFact),
 				new CombinationFact("T2", tkzr, tFact_Proxy, new MTSymbolFact(
 						tkzr)));
-		
-		sFact_Proxy.setFact(sFact);
-		dFact_Proxy.setFact(dFact);
-		lFact_Proxy.setFact(lFact);
-		eFact_Proxy.setFact(eFact);
 		tFact_Proxy.setFact(tFact);
-
+		
 		System.err.println("Parser Factory = " + sFact);
 
 		return sFact;
