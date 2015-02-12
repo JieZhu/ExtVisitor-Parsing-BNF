@@ -4,11 +4,6 @@ import parser.*;
 
 import java.util.*;
 
-import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-
-import extvisitor.IExtVisitorCmd;
-
 /**
  * BNF of BNF
  * 
@@ -50,21 +45,11 @@ public class FindNonTerminalsAlgo
 					}
 				});
 
-		// setCmd("D", new IGramSymVisitorCmd<Map<String,
-		// IGrammarSymbol>,Map<String, IGrammarSymbol>>() {
-		// public Map<String, IGrammarSymbol> apply(String idx, IGrammarSymbol
-		// host, @SuppressWarnings("unchecked") Map<String, IGrammarSymbol>...
-		// str2GramSymMaps) {
-		// System.out.println("FindNonTerminalsAlgo.dAlgo, processing D...");
-		// // STUDENT TO COMPLETE
-		// str2GramSymMaps[0].put(host.toString(), host);
-		// // STUDENT TO CHANGE THIS RETURN VALUE!
-		// return getNthInSequence(host, 3).execute(lAlgo, str2GramSymMaps);
-		// }
-		// });
 		setCmds(dAlgo.getCmds());
+		
+		lalgoInit();
 		// -------------------------------------
-		// lAlgo = LAlgoMaker.Singleton.make(dAlgo); // STUDENT COMMENT OUT THIS
+//		 lAlgo = LAlgoMaker.Singleton.make(dAlgo); // STUDENT COMMENT OUT THIS
 		// LINE WHEN IMPLEMENTING THE lAlgo field.
 		// -------------------------------------
 	}
@@ -102,6 +87,7 @@ public class FindNonTerminalsAlgo
 	 * lAlgo is a helper visitor to process the L grammar symbol
 	 */
 	// STUDENT IMPLEMENT THIS!
+	
 	private AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>> lAlgo = new AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>(
 			new ErrorCmd<Map<String, IGrammarSymbol>>("L", null)) {
 		{
@@ -113,7 +99,7 @@ public class FindNonTerminalsAlgo
 								IGrammarSymbol host,
 								Map<String, IGrammarSymbol>... params) {
 							// TODO Auto-generated method stub
-							System.err.println(host.toString());
+							// System.err.println(host.toString());
 							return params[0];
 						}
 
@@ -127,8 +113,7 @@ public class FindNonTerminalsAlgo
 								Map<String, IGrammarSymbol>... params) {
 							// TODO Auto-generated method stub
 
-							return ((SequenceSymbol) host)
-									.getSymbol2()
+							return ((SequenceSymbol) host).getSymbol2()
 									.execute(l3Algo, params);
 						}
 
@@ -139,11 +124,41 @@ public class FindNonTerminalsAlgo
 	private AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>> l3Algo = new AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>(
 			new ErrorCmd<Map<String, IGrammarSymbol>>("L3", null)) {
 		{
-			setCmd("L", lAlgo);
-			setCmd("D", dAlgo);
-			
+			setCmd("L",
+					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
+
+						@Override
+						public Map<String, IGrammarSymbol> apply(String index,
+								IGrammarSymbol host,
+								Map<String, IGrammarSymbol>... params) {
+							// TODO Auto-generated method stub
+							// return host.execute(lAlgo, params);
+							return host
+									.execute(lalgo_Proxy, params);
+						}
+					});
+			setCmd("D",
+					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
+
+						@Override
+						public Map<String, IGrammarSymbol> apply(String index,
+								IGrammarSymbol host,
+								Map<String, IGrammarSymbol>... params) {
+							// TODO Auto-generated method stub
+							return host.execute(dAlgo, params);
+						}
+					});
+
 		}
 	};
+
+	private AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>> lalgo_Proxy = new AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>(
+			new ErrorCmd<Map<String, IGrammarSymbol>>(
+					"L", null)) {};
+					
+	private void lalgoInit(){
+		lalgo_Proxy = lAlgo;
+	}
 	/**
 	 * Convenience method that returns the n'th symbol in a sequence. Note that
 	 * that unless the symbol is the last symbol in the sequence, the
