@@ -85,8 +85,14 @@ public class MakeParserFactAlgo extends AGramSymVisitor<ITokVisitorFact, Void> {
 		this.nonTerminals = nonTerminals;
 
 		//STUDENT TO COMPLETE
-
-
+		for (String key : nonTerminals.keySet()) {
+			System.err.println(key);
+			proxies.put(key, new ProxyFact());
+			
+		}
+			
+		setCmd("D", (index, host, params) -> host.execute(dAlgo, params) );
+		setCmd("S1", (index, host, params) -> getNthInSequence(host, 1).execute(this, params));
 	}
 
 	/**
