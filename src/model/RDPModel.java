@@ -232,7 +232,8 @@ public class RDPModel {
 		String resultStr = "\nNon-Terminal Symbols: ";
 
 		for(Map.Entry<String, IGrammarSymbol> entry : nonTerminalsMap.entrySet()) {
-			resultStr += entry.getValue()+" ";
+//			resultStr += entry.getValue()+" ";
+			resultStr += entry.getKey()+" ";
 		}
 		resultStr += "\n";
 

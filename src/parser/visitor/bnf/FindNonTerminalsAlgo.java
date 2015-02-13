@@ -32,22 +32,9 @@ public class FindNonTerminalsAlgo
 				new HashMap<String, IGrammarSymbol>()));
 
 		// STUDENT TO COMPLETE
-		setCmd("S1",
-				new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
-
-					@Override
-					public Map<String, IGrammarSymbol> apply(
-							String index,
-							IGrammarSymbol host,
-							@SuppressWarnings("unchecked") Map<String, IGrammarSymbol>... params) {
-						return ((SequenceSymbol) host).getSymbol2().execute(
-								FindNonTerminalsAlgo.this, params);
-					}
-				});
-
-		setCmds(dAlgo.getCmds());
+		setCmd("S1", (index, host, params) -> getNthInSequence(host, 1).execute(this, params));
+		setCmd("D", (index, host, params) -> host.execute(dAlgo, params));
 		
-		lalgoInit();
 		// -------------------------------------
 //		 lAlgo = LAlgoMaker.Singleton.make(dAlgo); // STUDENT COMMENT OUT THIS
 		// LINE WHEN IMPLEMENTING THE lAlgo field.
@@ -61,21 +48,10 @@ public class FindNonTerminalsAlgo
 			new ErrorCmd<Map<String, IGrammarSymbol>>("D", null)) {
 		// Initializer block
 		{
-			setCmd("D",
-					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
-						public Map<String, IGrammarSymbol> apply(
-								String idx,
-								IGrammarSymbol host,
-								@SuppressWarnings("unchecked") Map<String, IGrammarSymbol>... str2GramSymMaps) {
-							System.out
-									.println("FindNonTerminalsAlgo.dAlgo, processing D...");
-							// STUDENT TO COMPLETE
-							str2GramSymMaps[0].put(host.toString(), host);
-							// STUDENT TO CHANGE THIS RETURN VALUE!
-							return getNthInSequence(host, 3).execute(lAlgo,
-									str2GramSymMaps);
-						}
-					});
+			setCmd("D", (index, host, params) -> {
+				params[0].put(host.toString(), host);
+				return getNthInSequence(host, 3).execute(lAlgo, params);
+			});
 		}
 	};
 
@@ -91,74 +67,13 @@ public class FindNonTerminalsAlgo
 	private AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>> lAlgo = new AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>(
 			new ErrorCmd<Map<String, IGrammarSymbol>>("L", null)) {
 		{
-			setCmd("MTSymbol",
-					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
-
-						@Override
-						public Map<String, IGrammarSymbol> apply(String index,
-								IGrammarSymbol host,
-								Map<String, IGrammarSymbol>... params) {
-							// TODO Auto-generated method stub
-							// System.err.println(host.toString());
-							return params[0];
-						}
-
-					});
-			setCmd("L2",
-					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
-
-						@Override
-						public Map<String, IGrammarSymbol> apply(String index,
-								IGrammarSymbol host,
-								Map<String, IGrammarSymbol>... params) {
-							// TODO Auto-generated method stub
-
-							return ((SequenceSymbol) host).getSymbol2()
-									.execute(l3Algo, params);
-						}
-
-					});
+			setCmd("MTSymbol", (index, host, params) -> params[0]);
+			setCmd("L2", (index, host, params) -> getNthInSequence(host, 1).execute(this, params) );
+			setCmd("D", (index, host, params) -> host.execute(dAlgo, params) );
 		}
 	};
 
-	private AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>> l3Algo = new AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>(
-			new ErrorCmd<Map<String, IGrammarSymbol>>("L3", null)) {
-		{
-			setCmd("L",
-					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
 
-						@Override
-						public Map<String, IGrammarSymbol> apply(String index,
-								IGrammarSymbol host,
-								Map<String, IGrammarSymbol>... params) {
-							// TODO Auto-generated method stub
-							// return host.execute(lAlgo, params);
-							return host
-									.execute(lalgo_Proxy, params);
-						}
-					});
-			setCmd("D",
-					new IGramSymVisitorCmd<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>() {
-
-						@Override
-						public Map<String, IGrammarSymbol> apply(String index,
-								IGrammarSymbol host,
-								Map<String, IGrammarSymbol>... params) {
-							// TODO Auto-generated method stub
-							return host.execute(dAlgo, params);
-						}
-					});
-
-		}
-	};
-
-	private AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>> lalgo_Proxy = new AGramSymVisitor<Map<String, IGrammarSymbol>, Map<String, IGrammarSymbol>>(
-			new ErrorCmd<Map<String, IGrammarSymbol>>(
-					"L", null)) {};
-					
-	private void lalgoInit(){
-		lalgo_Proxy = lAlgo;
-	}
 	/**
 	 * Convenience method that returns the n'th symbol in a sequence. Note that
 	 * that unless the symbol is the last symbol in the sequence, the
